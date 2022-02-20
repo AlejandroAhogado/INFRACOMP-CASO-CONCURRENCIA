@@ -7,11 +7,13 @@ public class Buzon {
 	private List<String> mensajes;
 	private int tamano;
 	private char id;
+	private int contador;
 	
 	public Buzon(int tamano, char id) {
 		this.tamano = tamano;
 		this.mensajes = new LinkedList<String>();
 		this.id = id;
+		this.contador = 0;
 	}
 	
 	public synchronized boolean hayMensajes() {
@@ -29,6 +31,7 @@ public class Buzon {
 		
 		
 		this.mensajes.add(mensaje);
+		contador++;
 		
 		notify();
 			
@@ -46,6 +49,7 @@ public class Buzon {
 		}
 		
 		String mensaje = this.mensajes.remove(0);
+		contador--;
 		notify();
 		
 		return mensaje;
