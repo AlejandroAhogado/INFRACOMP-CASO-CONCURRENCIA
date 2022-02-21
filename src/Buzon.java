@@ -8,12 +8,14 @@ public class Buzon {
 	private int tamano;
 	private char id;
 	private int contador;
+	private static Productor thr;
 	
 	public Buzon(int tamano, char id) {
 		this.tamano = tamano;
 		this.mensajes = new LinkedList<String>();
 		this.id = id;
 		this.contador = 0;
+		this.thr = thr;
 	}
 	
 	public synchronized boolean hayMensajes() {
@@ -39,19 +41,22 @@ public class Buzon {
 	
 	public synchronized String retirarMensaje() {
 		while(this.mensajes.size()==0) {
-			try {
-				wait();
-				//Pendiente revisar espera activa
-				//Thread.yield();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+
+			if (thr.recibioActivo == false){
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			else{
+				thr.yield();
 			}
 		}
 		
 		String mensaje = this.mensajes.remove(0);
 		contador--;
 		notify();
-		
 		return mensaje;
 		
 	}

@@ -6,7 +6,7 @@ public class Productor extends Thread {
 	private int id;
 	private static ArrayList<Buzon> buzones;
 	private int times;
-	private boolean recibioActivo;
+	public boolean recibioActivo;
 	private boolean transmitioActivo;
 	private String mensajeCopia;
 	
@@ -26,7 +26,7 @@ public class Productor extends Thread {
 						mensajeCopia + " Identificador del thread: " +this.id +
 						" Lo recibio de forma activa? "+ this.recibioActivo +
 						" Lo transmitio de forma activa? "+ this.transmitioActivo 
-						);			
+						);
 			}
 			if (this.id==2) {
 				this.buzones.get(1).insertarMensaje(
@@ -71,6 +71,7 @@ public class Productor extends Thread {
 		
 		if (this.id==1) {
 			mensajeCopia = this.buzones.get(3).retirarMensaje();
+			//System.out.println(mensajeCopia); //Imprime los mensajes finales antes de acabar con los threads
 		}
 		if (this.id==2) {
 			mensajeCopia = this.buzones.get(0).retirarMensaje();
