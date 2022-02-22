@@ -5,14 +5,12 @@ import java.util.Scanner;
 public class Productor extends Thread {
 	
 	private int id;
+	//revisar static
 	private static ArrayList<Buzon> buzones;
 	private int times;
 	public boolean recibioActivo;
 	private boolean transmitioActivo;
 	private String mensajeCopia;
-	
-	//contador para saber veces que entrega el 1
-	private int contadorUno;
 	
 	public Productor(int id,  ArrayList<Buzon> buzones, int times) {
 		this.id = id;
@@ -20,51 +18,43 @@ public class Productor extends Thread {
 		this.times = times;	
 	}
 	
-	public void enviarMensajes(String mensaje, int cantidadMensajes) {
+	
+	public String transformar (String mensaje) {
 		
-		mensajeCopia = mensaje;
-		contadorUno = 0;
-		
+		String mensajeTransformado = " ";
 		if (!mensaje.equals("FIN")) {
+			mensajeTransformado = mensaje + " ID: " +this.id +
+					" RA? "+ this.recibioActivo +
+					" TA? "+ this.transmitioActivo; 
+					 return mensajeTransformado;
+		}
+		else {
+			return mensaje;
+		}
+		
+	}
+	
+	
+	public void enviarMensajes(String mensaje) {
+
 			if (this.id==1) {
-				if(cantidadMensajes>=contadorUno) {	
-						this.buzones.get(0).insertarMensaje(
-								mensajeCopia + " Identificador del thread: " +this.id +
-								" Lo recibio de forma activa? "+ this.recibioActivo +
-								" Lo transmitio de forma activa? "+ this.transmitioActivo 
-								);
-						contadorUno++;
-				}else {System.out.println(mensajeCopia);}
+					this.buzones.get(0).insertarMensaje(mensaje);
 			}
 			if (this.id==2) {
-				this.buzones.get(1).insertarMensaje(
-						mensajeCopia + " Identificador del thread: " +this.id +
-						" Lo recibio de forma activa? "+ this.recibioActivo +
-						" Lo transmitio de forma activa? "+ this.transmitioActivo 
-						);
+				this.buzones.get(1).insertarMensaje(mensaje);
 				
 			}
 			if (this.id==3) {
-				this.buzones.get(2).insertarMensaje(
-						mensajeCopia + " Identificador del thread: " +this.id +
-						" Lo recibio de forma activa? "+ this.recibioActivo +
-						" Lo transmitio de forma activa? "+ this.transmitioActivo 
-						);
+				this.buzones.get(2).insertarMensaje(mensaje);
 				
 			}
 			if (this.id==4) {
-				this.buzones.get(3).insertarMensaje(
-						mensajeCopia + " Identificador del thread: " +this.id +
-						" Lo recibio de forma activa? "+ this.recibioActivo +
-						" Lo transmitio de forma activa? "+ this.transmitioActivo 
-						);
+				this.buzones.get(3).insertarMensaje(mensaje);
 				
 			}
 		
-		}
 		
-		
-		
+//Pendiente de revisar
 		if (mensaje.equals("FIN") && this.buzones.get(3).hayMensajes()==false) {
 			
 			//TOCA MATAR THREADS
@@ -75,11 +65,13 @@ public class Productor extends Thread {
 		
 	}
 	
-	public void sacarMensajes() {
+	public String sacarMensajes() {
 		
 		if (this.id==1) {
 			mensajeCopia = this.buzones.get(3).retirarMensaje();
-			//System.out.println(mensajeCopia); //Imprime los mensajes finales antes de acabar con los threads
+			
+//sirve 
+			System.out.println(mensajeCopia); //Imprime los mensajes finales antes de acabar con los threads
 		}
 		if (this.id==2) {
 			mensajeCopia = this.buzones.get(0).retirarMensaje();
@@ -89,9 +81,22 @@ public class Productor extends Thread {
 		}
 		if (this.id==4) {
 			mensajeCopia = this.buzones.get(2).retirarMensaje();
-		}		
+		}	
+		
+		return mensajeCopia;
 		
 	}
+	
+	//Metodo para iniciar mensajes
+	public String iniciarMensajes(int diferenciador) {
+		String msjT = "1";
+		
+		msjT = msjT + diferenciador;
+		return msjT;
+		
+		
+	}
+	
 	
 	
 	
@@ -101,24 +106,33 @@ public class Productor extends Thread {
 	@Override
 	public void run() {
 		
+		while (this.id==1 && contadoor<cantiMensajes) {
+			String msj = this.iniciarMensajes(contadoor);
+			String msjTrans = transformar(msj);
+			enviarMensajes(msjTrans);
+			System.out.println("entro1");
+			contadoor++;			
+		}
+		while (this.id==1 && contadoor==cantiMensajes 
+//Condicion que puede dañar todo
+				//&& this.buzones.get(3).hayMensajes()==true
+				) {
+			System.out.println("entro");
+			sacarMensajes();
+		}
 		
-//		while (contadorIM<1 && this.id==1) {
-//			for (int i = 0; i < array.length; i++) {
-//				
-//			}
-//			enviarMensajes(,cantiMensajes);	
-//			
-//			contadorIM++;
-//		}
-		
-		enviarMensajes("Hola", cantiMensajes);
-		sacarMensajes();
+		while (this.id!=1) {
+			String msg = sacarMensajes();	
+			String msgtTr = transformar(msg);
+			enviarMensajes(msgtTr);
+		}
 	}
 	
 	
 	public static int cantiMensajes;
-	public int contadorIM = 0;
-	public String mensajes[] = new String[0];
+	private int contadoor = 0;
+	//public int contadorIM = 0;
+	//public String mensajes[] = new String[0];
 	
 	
 	public static void main(String[] args) {
@@ -127,38 +141,35 @@ public class Productor extends Thread {
 		Scanner teclado = new Scanner(System.in);
 		int contador = 0;
 
-		System.out.println("Cuantos mensajes van a ingresar?");
+		System.out.println("Cuantos mensajes se van a crear?");
 		cantiMensajes = teclado.nextInt();
-		String mensajes[] = new String [cantiMensajes];
-
-		while(contador<cantiMensajes){
-			System.out.println("Digite su mensaje: ");
-			mensajes[contador] = teclado.nextLine();
-			contador++;
-		}
+		System.out.println(cantiMensajes);
+		//Ya no lo necesitamos, crea los mensajes el proceso 1
+		//String mensajes[] = new String [cantiMensajes];
 		
-		Buzon b1 = new Buzon(4, 'A');
-		Buzon b2 = new Buzon(6, 'B');
-		Buzon b3 = new Buzon(2, 'C');
-		Buzon b4 = new Buzon(3, 'D');
+		Buzon b1 = new Buzon(1, 'A');
+		Buzon b2 = new Buzon(1, 'B');
+		Buzon b3 = new Buzon(1, 'C');
+		Buzon b4 = new Buzon(1, 'D');
 		
-		ArrayList<Buzon> buzones = new 	ArrayList();
+		ArrayList<Buzon> buzones = new 	ArrayList<Buzon>();
 		
 		buzones.add(b1);
 		buzones.add(b2);
 		buzones.add(b3);
-		buzones.add(b4);
+		buzones.add(b4);	
 		
 		Productor p1 = new Productor(1, buzones, 0);
 		Productor p2 = new Productor(2, buzones, 0);
 		Productor p3 = new Productor(3, buzones, 0);
 		Productor p4 = new Productor(4, buzones, 0);
-		
+			
 		System.out.println("antes del start");
 		p1.start();
 		p2.start();
 		p3.start();
 		p4.start();
+		System.out.println("despues del start");
 	}
 	
 	

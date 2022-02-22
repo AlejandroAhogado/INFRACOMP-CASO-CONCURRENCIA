@@ -7,14 +7,18 @@ public class Buzon {
 	private List<String> mensajes;
 	private int tamano;
 	private char id;
-	private int contador;
+	//private int contador;
 	//private static Productor thr;
+	
+	public int getId() {
+		return this.id;
+	}
 	
 	public Buzon(int tamano, char id) {
 		this.tamano = tamano;
 		this.mensajes = new LinkedList<String>();
 		this.id = id;
-		this.contador = 0;
+		//this.contador = 0;
 		//this.thr = thr;
 	}
 	
@@ -27,7 +31,7 @@ public class Buzon {
 //IMPORTANTE!!		
 //revisar el while con el tamano
 		
-		while(this.mensajes.size()<this.tamano) {
+		while(this.mensajes.size()>this.tamano) {
 			try {
 				wait();
 				//falta espera activa4
@@ -38,8 +42,7 @@ public class Buzon {
 		
 		
 		this.mensajes.add(mensaje);
-		contador++;
-		
+		//contador++;		
 		notify();
 			
 	}
@@ -60,7 +63,7 @@ public class Buzon {
 		}
 		
 		String mensaje = this.mensajes.remove(0);
-		contador--;
+		//contador--;
 		notify();
 		return mensaje;
 		
