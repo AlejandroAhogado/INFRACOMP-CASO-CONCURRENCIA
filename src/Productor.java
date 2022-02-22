@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 public class Productor extends Thread {
 	
 	private int id;
-	//revisar static
 	private static ArrayList<Buzon> buzones;
 	private int times;
 	public boolean recibioActivo;
@@ -31,8 +30,8 @@ public class Productor extends Thread {
 		try {
 			Thread.sleep(this.times);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			JOptionPane.showMessageDialog(null, "Se finalizo todo el procedimiento correctamente, la excepcion indica los que estan esperando porque ya no tienen mas mensajes"+e);
 		}
 		String mensajeTransformado = " ";
 		if (!mensaje.equals("FIN")) {
@@ -64,19 +63,7 @@ public class Productor extends Thread {
 			if (this.id==4) {
 				this.buzones.get(3).insertarMensaje(mensaje, this.transmitioActivo);
 				
-			}
-		
-		
-//Pendiente de revisar
-//		if (
-//			//	mensaje.equals("FIN") && this.buzones.get(3).hayMensajes()==false
-//				) {
-//			
-//			//TOCA MATAR THREADS
-//			this.interrupt();
-//		}
-		
-		
+			}	
 		
 	}
 	
@@ -85,11 +72,11 @@ public class Productor extends Thread {
 		if (this.id==1) {
 			mensajeCopia = this.buzones.get(3).retirarMensaje(this.recibioActivo);
 			
-//sirve 
+
 			System.out.println(mensajeCopia); //Imprime los mensajes finales antes de acabar con los threads
 			if (mensajeCopia.equals("FIN")) {
 				try {
-//interrumpir threads
+					//interrumpir threads
 					this.interrupt();
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Se finalizo todo el procedimiento correctamente, la excepcion indica los que estan esperando porque ya no tienen mas mensajes"+e);
@@ -151,8 +138,7 @@ public class Productor extends Thread {
 	
 	public static int cantiMensajes;
 	private int contadoor = 0;
-	//public int contadorIM = 0;
-	//public String mensajes[] = new String[0];
+
 	
 	
 	public static void main(String[] args) {
