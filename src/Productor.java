@@ -17,10 +17,12 @@ public class Productor extends Thread {
 	private boolean transmitioActivo;
 	private String mensajeCopia;
 	
-	public Productor(int id,  ArrayList<Buzon> buzones, int times) {
+	public Productor(int id,  ArrayList<Buzon> buzones, int times,  boolean transmitioActivo, boolean recibioActivo ) {
 		this.id = id;
 		this.buzones = buzones;
 		this.times = times;	
+		this.recibioActivo = recibioActivo;
+		this.transmitioActivo = transmitioActivo;
 	}
 	
 	
@@ -115,14 +117,12 @@ public class Productor extends Thread {
 			String msj = this.iniciarMensajes(contadoor);
 			String msjTrans = transformar(msj);
 			enviarMensajes(msjTrans);
-			System.out.println("entro1");
 			contadoor++;			
 		}
 		while (this.id==1 && contadoor==cantiMensajes 
 //Condicion que puede dañar todo
 				//&& this.buzones.get(3).hayMensajes()==true
 				) {
-			System.out.println("entro");
 			sacarMensajes();
 		}
 		
@@ -148,9 +148,7 @@ public class Productor extends Thread {
 
 		System.out.println("Cuantos mensajes se van a crear?");
 		cantiMensajes = teclado.nextInt();
-		System.out.println(cantiMensajes);
-		//Ya no lo necesitamos, crea los mensajes el proceso 1
-		//String mensajes[] = new String [cantiMensajes];
+
 		
 		
 		//Lectura de archivo txt
@@ -158,37 +156,7 @@ public class Productor extends Thread {
 		FileReader fr;
 		BufferedReader br;
 		
-		//Variables a leer
-		// Id buzones
-		char pb = ' ';
-		char sb = ' ';
-		char tb = ' ';
-		char cb = ' ';
-		// tamano buzones
-		int pt = 0;
-		int st = 0;
-		int tt = 0;
-		int ct = 0;
-		//Id procesos
-		int pp = 0;
-		int sp = 0;
-		int tp = 0;
-		int cp = 0;
-		//Tiempos
-		int t1 = 0;
-		int t2 = 0;
-		int t3 = 0;
-		int t4 = 0;
-		//Envio
-		boolean pe = false;
-		boolean se = false;
-		boolean te = false;
-		boolean ce = false;
-		//Transmision
-		boolean ptt = false;
-		boolean stt = false;
-		boolean ttt = false;
-		boolean ctt = false;
+
 				
 		String lineas[] = new String [8];
 		
@@ -203,22 +171,62 @@ public class Productor extends Thread {
 			lineas[ii] = linea;
 			ii++;
 		}
-			
-			
-		br.close();
-		fr.close();
-			
-			
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, " Hubo un error leyendo el archivo " + e);
-		}
+		
+		//Arreglos 
+		String[] primeraLinea = lineas[0].split(" ");
+		String[] segundaLinea = lineas[1].split(" ");
+		String[] terceraLinea = lineas[2].split(" ");
+		String[] cuartaLinea = lineas[3].split(" ");
+		String[] quintaLinea = lineas[4].split(" ");
+		String[] sextaLinea = lineas[5].split(" ");
+		String[] septimaLinea = lineas[6].split(" ");
+		String[] octavaLinea = lineas[7].split(" ");
+		
+		//Variables a leer
+		// Id buzones
+		String pb = primeraLinea[0];
+		String sb = segundaLinea[0];
+		String tb = terceraLinea[0];
+		String cb = cuartaLinea[0];
+		// tamano buzones
+		int pt = Integer.parseInt(primeraLinea[1]);
+		int st = Integer.parseInt(segundaLinea[1]);
+		int tt = Integer.parseInt(terceraLinea[1]);
+		int ct = Integer.parseInt(cuartaLinea[1]);
+		//Id procesos
+		int pp = Integer.parseInt(quintaLinea[0]);
+		int sp = Integer.parseInt(sextaLinea[0]);
+		int tp = Integer.parseInt(septimaLinea[0]);
+		int cp = Integer.parseInt(octavaLinea[0]);
+		//Tiempos
+		int t1 = Integer.parseInt(quintaLinea[1]);
+		int t2 = Integer.parseInt(sextaLinea[1]);
+		int t3 = Integer.parseInt(septimaLinea[1]);
+		int t4 = Integer.parseInt(octavaLinea[1]);
+		//Envio
+		boolean pe = Boolean.parseBoolean(quintaLinea[2]);
+		boolean se = Boolean.parseBoolean(sextaLinea[2]);
+		boolean te = Boolean.parseBoolean(septimaLinea[2]);
+		boolean ce = Boolean.parseBoolean(octavaLinea[2]);
+		//Recepcion
+		boolean ptt = Boolean.parseBoolean(quintaLinea[3]);
+		boolean stt = Boolean.parseBoolean(sextaLinea[3]);
+		boolean ttt = Boolean.parseBoolean(septimaLinea[3]);
+		boolean ctt = Boolean.parseBoolean(octavaLinea[3]);
+		
+		
+			br.close();
+			fr.close();
+		
+	
+
 		
 		
 		
-		Buzon b1 = new Buzon(1, 'A');
-		Buzon b2 = new Buzon(1, 'B');
-		Buzon b3 = new Buzon(1, 'C');
-		Buzon b4 = new Buzon(1, 'D');
+		Buzon b1 = new Buzon(pt, pb);
+		Buzon b2 = new Buzon(st, sb);
+		Buzon b3 = new Buzon(tt, tb);
+		Buzon b4 = new Buzon(ct, cb);
 		
 		ArrayList<Buzon> buzones = new 	ArrayList<Buzon>();
 		
@@ -227,17 +235,21 @@ public class Productor extends Thread {
 		buzones.add(b3);
 		buzones.add(b4);	
 		
-		Productor p1 = new Productor(1, buzones, 0);
-		Productor p2 = new Productor(2, buzones, 0);
-		Productor p3 = new Productor(3, buzones, 0);
-		Productor p4 = new Productor(4, buzones, 0);
+		Productor p1 = new Productor(pp, buzones, t1, ptt, pe);
+		Productor p2 = new Productor(sp, buzones, t2, stt, se);
+		Productor p3 = new Productor(tp, buzones, t3, ttt, te);
+		Productor p4 = new Productor(cp, buzones, t4, ctt, ce);
+		
 			
-		System.out.println("antes del start");
+		
 		p1.start();
 		p2.start();
 		p3.start();
 		p4.start();
-		System.out.println("despues del start");
+		
+		} catch (Exception e) {
+			return;
+		}
 	}
 	
 	

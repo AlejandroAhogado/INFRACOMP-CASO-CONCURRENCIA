@@ -6,15 +6,15 @@ public class Buzon {
 	
 	private List<String> mensajes;
 	private int tamano;
-	private char id;
+	private String id;
 	//private int contador;
 	//private static Productor thr;
 	
-	public int getId() {
+	public String getId() {
 		return this.id;
 	}
 	
-	public Buzon(int tamano, char id) {
+	public Buzon(int tamano, String id) {
 		this.tamano = tamano;
 		this.mensajes = new LinkedList<String>();
 		this.id = id;
