@@ -14,7 +14,7 @@ public class Productor extends Thread {
 	private static ArrayList<Buzon> buzones;
 	private int times;
 	public boolean recibioActivo;
-	private boolean transmitioActivo;
+	public boolean transmitioActivo;
 	private String mensajeCopia;
 	
 	public Productor(int id,  ArrayList<Buzon> buzones, int times,  boolean transmitioActivo, boolean recibioActivo ) {
@@ -27,7 +27,13 @@ public class Productor extends Thread {
 	
 	
 	public String transformar (String mensaje) {
-		
+				
+		try {
+			Thread.sleep(this.times);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String mensajeTransformado = " ";
 		if (!mensaje.equals("FIN")) {
 			mensajeTransformado = mensaje + " ID: " +this.id +
@@ -45,28 +51,30 @@ public class Productor extends Thread {
 	public void enviarMensajes(String mensaje) {
 
 			if (this.id==1) {
-					this.buzones.get(0).insertarMensaje(mensaje);
+					this.buzones.get(0).insertarMensaje(mensaje, this.transmitioActivo);
 			}
 			if (this.id==2) {
-				this.buzones.get(1).insertarMensaje(mensaje);
+				this.buzones.get(1).insertarMensaje(mensaje, this.transmitioActivo);
 				
 			}
 			if (this.id==3) {
-				this.buzones.get(2).insertarMensaje(mensaje);
+				this.buzones.get(2).insertarMensaje(mensaje, this.transmitioActivo);
 				
 			}
 			if (this.id==4) {
-				this.buzones.get(3).insertarMensaje(mensaje);
+				this.buzones.get(3).insertarMensaje(mensaje, this.transmitioActivo);
 				
 			}
 		
 		
 //Pendiente de revisar
-		if (mensaje.equals("FIN") && this.buzones.get(3).hayMensajes()==false) {
-			
-			//TOCA MATAR THREADS
-			this.interrupt();
-		}
+//		if (
+//			//	mensaje.equals("FIN") && this.buzones.get(3).hayMensajes()==false
+//				) {
+//			
+//			//TOCA MATAR THREADS
+//			this.interrupt();
+//		}
 		
 		
 		
@@ -75,19 +83,28 @@ public class Productor extends Thread {
 	public String sacarMensajes() {
 		
 		if (this.id==1) {
-			mensajeCopia = this.buzones.get(3).retirarMensaje();
+			mensajeCopia = this.buzones.get(3).retirarMensaje(this.recibioActivo);
 			
 //sirve 
 			System.out.println(mensajeCopia); //Imprime los mensajes finales antes de acabar con los threads
+			if (mensajeCopia.equals("FIN")) {
+				try {
+//interrumpir threads
+					this.interrupt();
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Se finalizo todo el procedimiento correctamente, la excepcion indica los que estan esperando porque ya no tienen mas mensajes"+e);
+				}
+				
+			}
 		}
 		if (this.id==2) {
-			mensajeCopia = this.buzones.get(0).retirarMensaje();
+			mensajeCopia = this.buzones.get(0).retirarMensaje(this.recibioActivo);
 		}
 		if (this.id==3) {
-			mensajeCopia = this.buzones.get(1).retirarMensaje();
+			mensajeCopia = this.buzones.get(1).retirarMensaje(this.recibioActivo);
 		}
 		if (this.id==4) {
-			mensajeCopia = this.buzones.get(2).retirarMensaje();
+			mensajeCopia = this.buzones.get(2).retirarMensaje(this.recibioActivo);
 		}	
 		
 		return mensajeCopia;
@@ -119,10 +136,8 @@ public class Productor extends Thread {
 			enviarMensajes(msjTrans);
 			contadoor++;			
 		}
-		while (this.id==1 && contadoor==cantiMensajes 
-//Condicion que puede dañar todo
-				//&& this.buzones.get(3).hayMensajes()==true
-				) {
+		if (this.id==1 && contadoor==cantiMensajes) {enviarMensajes("FIN");}
+		while (this.id==1 && contadoor==cantiMensajes) {			
 			sacarMensajes();
 		}
 		

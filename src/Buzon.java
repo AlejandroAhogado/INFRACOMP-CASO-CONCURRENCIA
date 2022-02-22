@@ -1,6 +1,8 @@
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 public class Buzon {
 	
 	
@@ -8,7 +10,7 @@ public class Buzon {
 	private int tamano;
 	private String id;
 	//private int contador;
-	//private static Productor thr;
+	//private  Productor thr;
 	
 	public String getId() {
 		return this.id;
@@ -26,18 +28,23 @@ public class Buzon {
 		return this.mensajes.size() > 0;
 	}
 	
-	public synchronized void insertarMensaje(String mensaje) {
+	public synchronized void insertarMensaje(String mensaje, boolean estado) {
 		
 //IMPORTANTE!!		
 //revisar el while con el tamano
 		
+		
+		
 		while(this.mensajes.size()>this.tamano) {
-			try {
-				wait();
-				//falta espera activa4
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			if (estado==false) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					JOptionPane.showMessageDialog(null, "Se finalizo todo el procedimiento correctamente, la excepcion indica los que estan esperando porque ya no tienen mas mensajes"+e);
+				}
+			}else {
+				Thread.yield();
+				}
 		}
 		
 		
@@ -47,19 +54,19 @@ public class Buzon {
 			
 	}
 	
-	public synchronized String retirarMensaje() {
+	public synchronized String retirarMensaje(boolean estado) {
 		while(this.mensajes.size()==0) {
 
-			//if (thr.recibioActivo == false){
+			if (estado== false){
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Se finalizo todo el procedimiento correctamente, la excepcion indica los que estan esperando porque ya no tienen mas mensajes"+e);
 				}
-			//}
-//			else{
-//				thr.yield();
-//			}
+			}
+			else{
+				Thread.yield();
+			}
 		}
 		
 		String mensaje = this.mensajes.remove(0);

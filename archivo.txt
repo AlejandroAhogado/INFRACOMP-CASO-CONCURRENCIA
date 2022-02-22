@@ -2,7 +2,7 @@ A 5
 B 4
 C 3
 D 4
-1 20 true false
-2 40 true true
-3 60 false true
-4 80 false false
+1 20 false true 
+2 40 false false 
+3 60 false true 
+4 80 false true 
