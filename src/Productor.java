@@ -1,6 +1,11 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 public class Productor extends Thread {
 	
@@ -146,6 +151,69 @@ public class Productor extends Thread {
 		System.out.println(cantiMensajes);
 		//Ya no lo necesitamos, crea los mensajes el proceso 1
 		//String mensajes[] = new String [cantiMensajes];
+		
+		
+		//Lectura de archivo txt
+		File archivo;
+		FileReader fr;
+		BufferedReader br;
+		
+		//Variables a leer
+		// Id buzones
+		char pb = ' ';
+		char sb = ' ';
+		char tb = ' ';
+		char cb = ' ';
+		// tamano buzones
+		int pt = 0;
+		int st = 0;
+		int tt = 0;
+		int ct = 0;
+		//Id procesos
+		int pp = 0;
+		int sp = 0;
+		int tp = 0;
+		int cp = 0;
+		//Tiempos
+		int t1 = 0;
+		int t2 = 0;
+		int t3 = 0;
+		int t4 = 0;
+		//Envio
+		boolean pe = false;
+		boolean se = false;
+		boolean te = false;
+		boolean ce = false;
+		//Transmision
+		boolean ptt = false;
+		boolean stt = false;
+		boolean ttt = false;
+		boolean ctt = false;
+				
+		String lineas[] = new String [8];
+		
+		try {
+		archivo = new File("archivo.txt");
+		fr = new FileReader(archivo);
+		br = new BufferedReader(fr);
+		
+		String linea;
+		int ii = 0;
+		while((linea=br.readLine())!=null) {
+			lineas[ii] = linea;
+			ii++;
+		}
+			
+			
+		br.close();
+		fr.close();
+			
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, " Hubo un error leyendo el archivo " + e);
+		}
+		
+		
 		
 		Buzon b1 = new Buzon(1, 'A');
 		Buzon b2 = new Buzon(1, 'B');
